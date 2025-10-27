@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Empleados - TecnoGlobal S.A.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-[#F3F4F6] font-sans">
+
+<header class="bg-white shadow-md">
+    <nav class="container mx-auto px-6 py-4">
+        <h1 class="text-3xl font-bold text-[#1F2937]">TecnoGlobal S.A.</h1>
+        <p class="text-[#1F2937]/80">Panel de Administración de Empleados</p>
+    </nav>
+</header>
+
+<main class="container mx-auto px-6 py-8">
+
+    <section class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-sm font-medium text-[#1F2937]/70">Total Empleados</h3>
+            <p id="total-empleados" class="text-3xl font-bold text-[#1F2937]">-</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-sm font-medium text-[#1F2937]/70">Empleados Activos</h3>
+            <p id="total-activos" class="text-3xl font-bold text-green-600">-</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-sm font-medium text-[#1F2937]/70">Empleados Inactivos</h3>
+            <p id="total-inactivos" class="text-3xl font-bold text-red-600">-</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-sm font-medium text-[#1F2937]/70">Salario Promedio</h3>
+            <p id="salario-promedio" class="text-3xl font-bold text-[#F59E0B]">-</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-sm font-medium text-[#1F2937]/70">Antigüedad Prom. (meses)</h3>
+            <p id="antiguedad-promedio" class="text-3xl font-bold text-[#FBBF24]">-</p>
+        </div>
+    </section>
+
+    <section class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 class="text-xl font-semibold mb-4 text-[#1F2937]">Distribución por Puesto</h3>
+        <div class="max-w-md mx-auto">
+            <canvas id="grafico-puestos"></canvas>
+        </div>
+    </section>
+
+    <section class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 class="text-xl font-semibold mb-4 text-[#1F2937]" id="form-titulo">Registrar Nuevo Empleado</h3>
+
+        <div id="form-mensaje" class="hidden p-3 text-sm rounded-lg mb-4" role="alert"></div>
+
+        <form id="form-nuevo-empleado" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            <input type="hidden" id="id-empleado-editando">
+
+            <div>
+                <label for="nombre" class="block text-sm font-medium text-[#1F2937]">Nombre *</label>
+                <input type="text" id="nombre" required class="mt-1 p-2 w-full border rounded-md">
+            </div>
+            <div>
+                <label for="apellido" class="block text-sm font-medium text-[#1F2937]">Apellido *</label>
+                <input type="text" id="apellido" required class="mt-1 p-2 w-full border rounded-md">
+            </div>
+            <div>
+                <label for="dui" class="block text-sm font-medium text-[#1F2937]">DUI *</label>
+                <input type="text" id="dui" required class="mt-1 p-2 w-full border rounded-md" placeholder="00000000-0">
+            </div>
+
+            <div>
+                <label for="correo" class="block text-sm font-medium text-[#1F2937]">Correo *</label>
+                <input type="email" id="correo" required class="mt-1 p-2 w-full border rounded-md">
+            </div>
+            <div>
+                <label for="telefono" class="block text-sm font-medium text-[#1F2937]">Teléfono</label>
+                <input type="tel" id="telefono" class="mt-1 p-2 w-full border rounded-md">
+            </div>
+            <div>
+                <label for="direccion" class="block text-sm font-medium text-[#1F2937]">Dirección</label>
+                <input type="text" id="direccion" class="mt-1 p-2 w-full border rounded-md">
+            </div>
+
+            <div>
+                <label for="puesto" class="block text-sm font-medium text-[#1F2937]">Puesto *</label>
+                <input type="text" id="puesto" required class="mt-1 p-2 w-full border rounded-md" placeholder="Gerente, Técnico...">
+            </div>
+            <div>
+                <label for="salario" class="block text-sm font-medium text-[#1F2937]">Salario *</label>
+                <input type="number" id="salario" step="0.01" required class="mt-1 p-2 w-full border rounded-md">
+            </div>
+            <div>
+                <label for="fecha_contratacion" class="block text-sm font-medium text-[#1F2937]">Fecha Contratación *</label>
+                <input type="date" id="fecha_contratacion" required class="mt-1 p-2 w-full border rounded-md">
+            </div>
+
+            <div class="md:col-span-2">
+                <label for="estado" class="block text-sm font-medium text-[#1F2937]">Estado *</label>
+                <select id="estado" class="mt-1 p-2 w-full border rounded-md">
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                </select>
+            </div>
+            <div class="md:col-span-1 flex items-end">
+                <button type="submit" id="btn-guardar-empleado" class="w-full bg-[#F59E0B] text-[#1F2937] p-2 rounded-md hover:bg-[#FBBF24]">
+                    Guardar Empleado
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <section class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 class="text-xl font-semibold mb-4 text-[#1F2937]">Filtrar Empleados</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <input type="text" id="filtro-nombre" placeholder="Buscar por nombre o DUI..." class="p-2 border rounded-md">
+            <select id="filtro-puesto" class="p-2 border rounded-md">
+                <option value="">Todos los Puestos</option>
+                <option value="Gerente">Gerente</option>
+                <option value="Técnico">Técnico</option>
+                <option value="Asistente">Asistente</option>
+                <option value="Analista">Analista</option>
+            </select>
+            <select id="filtro-estado" class="p-2 border rounded-md">
+                <option value="">Todos los Estados</option>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+            </select>
+            <input type="number" id="filtro-salario-mayor" placeholder="Salario mayor a..." class="p-2 border rounded-md">
+        </div>
+    </section>
+
+    <section class="bg-white rounded-lg shadow-md overflow-x-auto">
+        <table class="w-full min-w-max">
+            <thead class="bg-[#F3F4F6]">
+            <tr>
+                <th class="p-4 text-left text-sm font-semibold text-[#1F2937]">Nombre</th>
+                <th class="p-4 text-left text-sm font-semibold text-[#1F2937]">Puesto</th>
+                <th class="p-4 text-left text-sm font-semibold text-[#1F2937]">Correo</th>
+                <th class="p-4 text-left text-sm font-semibold text-[#1F2937]">Salario</th>
+                <th class="p-4 text-left text-sm font-semibold text-[#1F2937]">Estado</th>
+                <th class="p-4 text-left text-sm font-semibold text-[#1F2937]">Contratación</th>
+                <th class="p-4 text-left text-sm font-semibold text-[#1F2937]">Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="tabla-empleados" class="divide-y divide-gray-200">
+            <tr>
+                <td colspan="7" class="p-8 text-center text-[#1F2937]/70">Cargando datos...</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
